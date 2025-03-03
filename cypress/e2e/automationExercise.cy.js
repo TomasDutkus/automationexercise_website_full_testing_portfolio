@@ -142,4 +142,100 @@ describe('Automation Exercise', () => {
     // 10. Verify that 'ACCOUNT DELETED!' is visible
     cy.contains('Account Deleted!').should('be.visible');
   });
+
+  it('Test Case 3: Login User with incorrect email and password', () => {
+    // 1. Launch browser
+    // 2. Navigate to url 'http://automationexercise.com'
+    cy.visit('https://automationexercise.com/');
+
+    // 3. Verify that home page is visible successfully
+    cy.url().should('eq', 'https://automationexercise.com/');
+    cy.get('body').should('be.visible');
+
+    // 4. Click on 'Signup / Login' button
+    cy.get('ul.navbar-nav li').contains('Signup / Login').click();
+
+    // 5. Verify 'Login to your account' is visible
+    cy.get('.login-form')
+      .contains('Login to your account')
+      .should('be.visible');
+
+    // 6. Enter incorrect email address and password
+    cy.get('input[data-qa="login-email"]').click().type('wrongemail@gmail.com');
+    cy.get('input[data-qa="login-password"]').click().type('wrongpassword');
+
+    // 7. Click 'login' button
+    cy.get('button[data-qa="login-button"]').click();
+
+    // 8. Verify error 'Your email or password is incorrect!' is visible
+    cy.contains('Your email or password is incorrect!').should('be.visible');
+  });
+
+  it('Test Case 4: Logout User', () => {
+    // Create a user and save the details in Cypress.env
+    const user = createUser();
+
+    // Logout the user
+    logout();
+
+    // 1. Launch browser
+    // 2. Navigate to url 'http://automationexercise.com'
+    cy.visit('https://automationexercise.com/');
+
+    // 3. Verify that home page is visible successfully
+    cy.url().should('eq', 'https://automationexercise.com/');
+    cy.get('body').should('be.visible');
+
+    // 4. Click on 'Signup / Login' button
+    cy.get('ul.navbar-nav li').contains('Signup / Login').click();
+
+    // 5. Verify 'Login to your account' is visible
+    cy.get('.login-form')
+      .contains('Login to your account')
+      .should('be.visible');
+
+    // 6. Enter correct email address and password
+    cy.get('input[data-qa="login-email"]').click().type(user.email);
+    cy.get('input[data-qa="login-password"]').click().type(user.password);
+
+    // 7. Click 'login' button
+    cy.get('button[data-qa="login-button"]').click();
+
+    // 8. Verify that 'Logged in as username' is visible
+    cy.contains(`Logged in as ${user.name}`).should('be.visible');
+
+    // 9. Click 'Logout' button
+    cy.contains('Logout').click();
+
+    // 10. Verify that user is navigated to login page
+    cy.get('.login-form')
+      .contains('Login to your account')
+      .should('be.visible');
+  });
+
+  it('Test Case 5: Register User with existing email', () => {
+    // 1. Launch browser
+    // 2. Navigate to url 'http://automationexercise.com'
+    cy.visit('https://automationexercise.com/');
+
+    // 3. Verify that home page is visible successfully
+    cy.url().should('eq', 'https://automationexercise.com/');
+    cy.get('body').should('be.visible');
+
+    // 4. Click on 'Signup / Login' button
+    cy.get('ul.navbar-nav li').contains('Signup / Login').click();
+
+    // 5. Verify 'New User Signup!' is visible
+    cy.get('.signup-form').contains('New User Signup!').should('be.visible');
+
+    // 6. Enter name and already registered email address
+    cy.get('input[data-qa="signup-name"]').click().type('Tomas');
+    cy.get('input[data-qa="signup-email"]').click().type('tomastest@gmail.com');
+
+    // 7. Click 'Signup' button
+    cy.get('button[data-qa="signup-button"]').click();
+
+    // 8. Verify error 'Email Address already exist!' is visible
+    cy.contains('Email Address already exist!').should('be.visible');
+  });
 });
