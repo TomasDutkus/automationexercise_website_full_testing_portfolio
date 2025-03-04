@@ -238,4 +238,95 @@ describe('Automation Exercise', () => {
     // 8. Verify error 'Email Address already exist!' is visible
     cy.contains('Email Address already exist!').should('be.visible');
   });
+
+  it('Test Case 6: Contact Us Form', () => {
+    // 1. Launch browser
+    // 2. Navigate to url 'http://automationexercise.com'
+    cy.visit('https://automationexercise.com/');
+
+    // 3. Verify that home page is visible successfully
+    cy.url().should('eq', 'https://automationexercise.com/');
+    cy.get('body').should('be.visible');
+
+    // 4. Click on 'Contact Us' button
+    cy.get('ul.navbar-nav li').contains('Contact us').click();
+
+    // 5. Verify 'GET IN TOUCH' is visible
+    cy.contains('Get In Touch').should('be.visible');
+
+    // 6. Enter name, email, subject and message
+    cy.get('input[data-qa="name"]').click().type('Tomas');
+    cy.get('input[data-qa="email"]').click().type('tomastest@gmail.com');
+    cy.get('input[data-qa="subject"]').click().type('Test Subject');
+    cy.get('textarea[data-qa="message"]').click().type('Test Message');
+
+    // 7. Upload file
+    cy.get('input[name="upload_file"]').attachFile('example.json');
+
+    // 8. Click 'Submit' button
+    cy.get('input[data-qa="submit-button"]').click();
+
+    // 9. Click OK button
+    cy.on('window:confirm', () => true);
+
+    // 10. Verify success message 'Success! Your details have been submitted successfully.' is visible
+    cy.contains(
+      'Success! Your details have been submitted successfully.'
+    ).should('be.visible');
+
+    // 11. Click 'Home' button and verify that landed to home page successfully
+    cy.get('a.btn-success').click();
+    cy.url().should('eq', 'https://automationexercise.com/');
+  });
+
+  it('Test Case 7: Verify Test Cases Page', () => {
+    // 1. Launch browser
+    // 2. Navigate to url 'http://automationexercise.com'
+    cy.visit('https://automationexercise.com/');
+
+    // 3. Verify that home page is visible successfully
+    cy.url().should('eq', 'https://automationexercise.com/');
+    cy.get('body').should('be.visible');
+
+    // 4. Click on 'Test Cases' button
+    cy.get('ul.navbar-nav li').contains('Test Cases').click();
+
+    // 5. Verify user is navigated to test cases page successfully
+    cy.url().should('eq', 'https://automationexercise.com/test_cases');
+  });
+
+  it('Test Case 8: Verify All Products and product detail page', () => {
+    // 1. Launch browser
+    // 2. Navigate to url 'http://automationexercise.com'
+    cy.visit('https://automationexercise.com/');
+
+    // 3. Verify that home page is visible successfully
+    cy.url().should('eq', 'https://automationexercise.com/');
+    cy.get('body').should('be.visible');
+
+    // 4. Click on 'Products' button
+    cy.get('ul.navbar-nav li').contains('Products').click();
+
+    // 5. Verify user is navigated to ALL PRODUCTS page successfully
+    cy.url().should('eq', 'https://automationexercise.com/products');
+    cy.get('body').should('be.visible');
+
+    // 6. The products list is visible
+    cy.get('.features_items').should('be.visible');
+
+    // 7. Click on 'View Product' of first product
+    cy.get('a[href="/product_details/1"]').click();
+
+    // 8. User is landed to product detail page
+    cy.url().should('eq', 'https://automationexercise.com/product_details/1');
+
+    // 9. Verify that detail detail is visible: product name, category, price, availability, condition, brand
+    cy.get('.product-information').should('be.visible');
+    cy.get('h2').contains('Blue Top').should('be.visible');
+    cy.get('p').contains('Category').should('be.visible');
+    cy.get('span').contains('Rs. 500').should('be.visible');
+    cy.get('p').contains('Availability').should('be.visible');
+    cy.get('p').contains('Condition').should('be.visible');
+    cy.get('p').contains('Brand').should('be.visible');
+  });
 });
