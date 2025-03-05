@@ -329,4 +329,157 @@ describe('Automation Exercise', () => {
     cy.get('p').contains('Condition').should('be.visible');
     cy.get('p').contains('Brand').should('be.visible');
   });
+
+  it('Test Case 9: Search Product', () => {
+    // 1. Launch browser
+    // 2. Navigate to url 'http://automationexercise.com'
+    cy.visit('https://automationexercise.com/');
+
+    // 3. Verify that home page is visible successfully
+    cy.url().should('eq', 'https://automationexercise.com/');
+    cy.get('body').should('be.visible');
+
+    // 4. Click on 'Products' button
+    cy.get('ul.navbar-nav li').contains('Products').click();
+
+    // 5. Verify user is navigated to ALL PRODUCTS page successfully
+    cy.url().should('eq', 'https://automationexercise.com/products');
+    cy.get('body').should('be.visible');
+
+    // 6. Enter product name in search input and click search button
+    cy.get('#search_product').click().type('Blue Top');
+    cy.get('#submit_search').click();
+
+    // 7. Verify 'SEARCHED PRODUCTS' is visible
+    cy.contains('Searched Products').should('be.visible');
+
+    // 8. Verify all the products related to search are visible
+    cy.get('.features_items').should('be.visible');
+    cy.get('p').contains('Blue Top').should('be.visible');
+  });
+
+  it('Test Case 10: Verify Subscription in home page', () => {
+    // 1. Launch browser
+    // 2. Navigate to url 'http://automationexercise.com'
+    cy.visit('https://automationexercise.com/');
+
+    // 3. Verify that home page is visible successfully
+    cy.url().should('eq', 'https://automationexercise.com/');
+    cy.get('body').should('be.visible');
+
+    // 4. Scroll down to footer
+    cy.get('#footer').scrollIntoView();
+
+    // 5. Verify text 'SUBSCRIPTION'
+    cy.contains('Subscription').should('be.visible');
+
+    // 6. Enter email address in input and click arrow button
+    cy.get('#susbscribe_email').click().type('tomastest@gmail.com');
+    cy.get('#subscribe').click();
+
+    // 7. Verify success message 'You have been successfully subscribed!' is visible
+    cy.contains('You have been successfully subscribed!').should('be.visible');
+  });
+
+  it('Test Case 11: Verify Subscription in Cart page', () => {
+    // 1. Launch browser
+    // 2. Navigate to url 'http://automationexercise.com'
+    cy.visit('https://automationexercise.com/');
+
+    // 3. Verify that home page is visible successfully
+    cy.url().should('eq', 'https://automationexercise.com/');
+    cy.get('body').should('be.visible');
+
+    // 4. Click 'Cart' button
+    cy.get('ul.navbar-nav li').contains('Cart').click();
+
+    // 5. Scroll down to footer
+    cy.get('#footer').scrollIntoView();
+
+    // 6. Verify text 'SUBSCRIPTION'
+    cy.contains('Subscription').should('be.visible');
+
+    // 7. Enter email address in input and click arrow button
+    cy.get('input#susbscribe_email').click().type('tomastest@gmail.com');
+    cy.get('button#subscribe').click();
+
+    // 8. Verify success message 'You have been successfully subscribed!' is visible
+    cy.contains('You have been successfully subscribed!').should('be.visible');
+  });
+
+  it('Test Case 12: Add Products in Cart', () => {
+    // 1. Launch browser
+    // 2. Navigate to url 'http://automationexercise.com'
+    cy.visit('https://automationexercise.com/');
+
+    // 3. Verify that home page is visible successfully
+    cy.url().should('eq', 'https://automationexercise.com/');
+    cy.get('body').should('be.visible');
+
+    // 4. Click 'Products' button
+    cy.get('ul.navbar-nav li').contains('Products').click();
+
+    // 5. Hover over first product and click 'Add to cart'
+    cy.get('a[data-product-id="1"]')
+      .first()
+      .trigger('mouseover')
+      .contains('Add to cart')
+      .click();
+
+    // 6. Click 'Continue Shopping' button
+    cy.wait(2000);
+    cy.get('button.btn-success').contains('Continue Shopping').click();
+
+    // 7. Hover over second product and click 'Add to cart'
+    cy.get('a[data-product-id="2"]')
+      .first()
+      .trigger('mouseover')
+      .contains('Add to cart')
+      .click();
+
+    // 8. Click 'View Cart' button
+    cy.wait(2000);
+    cy.get('a[href="/view_cart"]').eq(1).click();
+
+    // 9. Verify both products are added to Cart
+    cy.get('tbody tr#product-1').should('be.visible');
+    cy.get('tbody tr#product-2').should('be.visible');
+
+    // 10. Verify their prices, quantity and total price
+    cy.get('tbody tr#product-1 td.cart_price').contains('Rs. 500');
+    cy.get('tbody tr#product-1 td.cart_quantity').contains('1');
+    cy.get('tbody tr#product-1 td.cart_total').contains('Rs. 500');
+
+    cy.get('tbody tr#product-2 td.cart_price').contains('Rs. 400');
+    cy.get('tbody tr#product-2 td.cart_quantity').contains('1');
+    cy.get('tbody tr#product-2 td.cart_total').contains('Rs. 400');
+  });
+
+  it('Test Case 13: Verify Product quantity in Cart', () => {
+    // 1. Launch browser
+    // 2. Navigate to url 'http://automationexercise.com'
+    cy.visit('https://automationexercise.com/');
+
+    // 3. Verify that home page is visible successfully
+    cy.url().should('eq', 'https://automationexercise.com/');
+    cy.get('body').should('be.visible');
+
+    // 4. Click 'View Product' for any product on home page
+    cy.get('a[href="/product_details/1"]').click();
+
+    // 5. Verify product detail is opened
+    cy.url().should('eq', 'https://automationexercise.com/product_details/1');
+
+    // 6. Increase quantity to 4
+    cy.get('input#quantity').clear().type('4');
+
+    // 7. Click 'Add to cart' button
+    cy.get('button.btn.btn-default.cart').click();
+
+    // 8. Click 'View Cart' button
+    cy.get('ul.navbar-nav li').contains('Cart').click();
+
+    // 9. Verify that product is displayed in cart page with exact quantity
+    cy.get('tbody tr#product-1 td.cart_quantity').contains('4');
+  });
 });
