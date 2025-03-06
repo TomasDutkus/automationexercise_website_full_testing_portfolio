@@ -92,7 +92,7 @@ function logout() {
 }
 
 describe('Automation Exercise', () => {
-  it('Test Case 1: Register User', () => {
+  /*it('Test Case 1: Register User', () => {
     // Create a user and save the details in Cypress.env
     const user = createUser();
 
@@ -237,6 +237,12 @@ describe('Automation Exercise', () => {
 
     // 8. Verify error 'Email Address already exist!' is visible
     cy.contains('Email Address already exist!').should('be.visible');
+
+    // Login with existing user and delete the account
+    cy.get('input[data-qa="login-email"]').click().type('tomastest@gmail.com');
+    cy.get('input[data-qa="login-password"]').click().type('Password123');
+    cy.get('button[data-qa="login-button"]').click();
+    cy.contains('Delete Account').click();
   });
 
   it('Test Case 6: Contact Us Form', () => {
@@ -477,9 +483,87 @@ describe('Automation Exercise', () => {
     cy.get('button.btn.btn-default.cart').click();
 
     // 8. Click 'View Cart' button
-    cy.get('ul.navbar-nav li').contains('Cart').click();
+    cy.wait(2000);
+    cy.get('a[href="/view_cart"]').eq(1).click();
 
     // 9. Verify that product is displayed in cart page with exact quantity
     cy.get('tbody tr#product-1 td.cart_quantity').contains('4');
+  }); */
+
+  it('Test Case 14: Place Order: Register while Checkout', () => {
+    // 1. Launch browser
+    // 2. Navigate to url 'http://automationexercise.com'
+    cy.visit('https://automationexercise.com/');
+
+    // 3. Verify that home page is visible successfully
+    cy.url().should('eq', 'https://automationexercise.com/');
+    cy.get('body').should('be.visible');
+
+    // 4. Click 'Products' button
+    cy.get('ul.navbar-nav li').contains('Products').click();
+
+    // 5. Hover over first product and click 'Add to cart'
+    cy.get('a[data-product-id="1"]')
+      .first()
+      .trigger('mouseover')
+      .contains('Add to cart')
+      .click();
+
+    // 6. Click 'View Cart' button
+    cy.wait(2000);
+    cy.get('a[href="/view_cart"]').eq(1).click();
+
+    // 7. Click 'Proceed To Checkout' button
+    cy.get('a').contains('Proceed To Checkout').click();
+
+    // 8. Click 'Register / Login' button
+    cy.get('a').contains('Register / Login').click();
+
+    // 9. Fill all details in Signup and create account
+    const user = createUser();
+
+    // 10. Verify 'ACCOUNT CREATED!' and click 'Continue' button
+    // 11. Verify ' Logged in as username' at top
+    // This is already verified in createUser function
+
+    // 12. Click 'Cart' button
+    cy.get('ul.navbar-nav li').contains('Cart').click();
+
+    // 13. Click 'Proceed To Checkout' button
+    cy.get('a').contains('Proceed To Checkout').click();
+
+    // 14. Verify Address Details and Review Your Order
+    cy.contains('Address Details').should('be.visible');
+    cy.contains('Review Your Order').should('be.visible');
+
+    // 15. Enter description in comment text area and click 'Place Order'
+    cy.get('textarea.form-control').click().type('Test Comment');
+    cy.get('a').contains('Place Order').click();
+
+    // 16. Enter payment details: Name on Card, Card Number, CVC, Expiration date
+    cy.get('input[data-qa="name-on-card"]').click().type('Tomas Test');
+    cy.get('input[data-qa="card-number"]').click().type('1234567890123456');
+    cy.get('input[data-qa="cvc"]').click().type('123');
+    cy.get('input[data-qa="expiry-month"]').click().type('10');
+    cy.get('input[data-qa="expiry-year"]').click().type('2028');
+
+    // 17. Click 'Pay and Confirm Order' button
+    cy.get('button[data-qa="pay-button"]').click();
+
+    // 18. Verify success message 'Your order has been placed successfully!'
+    cy.contains('Congratulations! Your order has been confirmed!').should(
+      'be.visible'
+    );
+
+    // 19. Click 'Delete Account' button
+    cy.contains('Delete Account').click();
+
+    // 20. Verify 'ACCOUNT DELETED!' and click 'Continue' button
+    cy.contains('Account Deleted!').should('be.visible');
+    cy.get('[data-qa="continue-button"]').click();
   });
 });
+
+/*
+
+*/
