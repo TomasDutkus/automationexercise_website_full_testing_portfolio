@@ -488,7 +488,7 @@ describe('Automation Exercise', () => {
 
     // 9. Verify that product is displayed in cart page with exact quantity
     cy.get('tbody tr#product-1 td.cart_quantity').contains('4');
-  }); */
+  });
 
   it('Test Case 14: Place Order: Register while Checkout', () => {
     // 1. Launch browser
@@ -520,7 +520,7 @@ describe('Automation Exercise', () => {
     cy.get('a').contains('Register / Login').click();
 
     // 9. Fill all details in Signup and create account
-    const user = createUser();
+    createUser();
 
     // 10. Verify 'ACCOUNT CREATED!' and click 'Continue' button
     // 11. Verify ' Logged in as username' at top
@@ -562,8 +562,338 @@ describe('Automation Exercise', () => {
     cy.contains('Account Deleted!').should('be.visible');
     cy.get('[data-qa="continue-button"]').click();
   });
+
+  it('Test Case 15: Place Order: Register before Checkout', () => {
+    createUser();
+
+    // 8. Add products to cart
+    cy.get('ul.navbar-nav li').contains('Products').click();
+    cy.get('a[data-product-id="1"]')
+      .first()
+      .trigger('mouseover')
+      .contains('Add to cart')
+      .click();
+
+    // 9. Click 'Cart' button
+    cy.wait(2000);
+    cy.get('a[href="/view_cart"]').eq(1).click();
+
+    // 10. Verify that cart page is displayed
+    cy.url().should('eq', 'https://automationexercise.com/view_cart');
+
+    // 11. Click Proceed To Checkout
+    cy.get('a').contains('Proceed To Checkout').click();
+
+    // 12. Verify Address Details and Review Your Order
+    cy.contains('Address Details').should('be.visible');
+    cy.contains('Review Your Order').should('be.visible');
+
+    // 13. Enter description in comment text area and click 'Place Order'
+    cy.get('textarea.form-control').click().type('Test Comment');
+    cy.get('a').contains('Place Order').click();
+
+    // 14. Enter payment details: Name on Card, Card Number, CVC, Expiration date
+    cy.get('input[data-qa="name-on-card"]').click().type('Tomas Test');
+    cy.get('input[data-qa="card-number"]').click().type('1234567890123456');
+    cy.get('input[data-qa="cvc"]').click().type('123');
+    cy.get('input[data-qa="expiry-month"]').click().type('10');
+    cy.get('input[data-qa="expiry-year"]').click().type('2028');
+
+    // 15. Click 'Pay and Confirm Order' button
+    cy.get('button[data-qa="pay-button"]').click();
+
+    // 16. Verify success message 'Your order has been placed successfully!'
+    cy.contains('Congratulations! Your order has been confirmed!').should(
+      'be.visible'
+    );
+
+    // 17. Click 'Delete Account' button
+    cy.contains('Delete Account').click();
+
+    // 18. Verify 'ACCOUNT DELETED!' and click 'Continue' button
+    cy.contains('Account Deleted!').should('be.visible');
+    cy.get('[data-qa="continue-button"]').click();
+  });
+
+  it('Test Case 16: Place Order: Login before Checkout', () => {
+    const user = createUser();
+    logout();
+
+    // 1. Launch browser
+    // 2. Navigate to url 'http://automationexercise.com'
+    cy.visit('https://automationexercise.com/');
+
+    // 3. Verify that home page is visible successfully
+    cy.url().should('eq', 'https://automationexercise.com/');
+    cy.get('body').should('be.visible');
+
+    // 4. Click 'Signup / Login' button
+    cy.get('a').contains('Signup / Login').click();
+
+    // 5. Fill email, password and click 'Login' button
+    cy.get('input[data-qa="login-email"]').click().type(user.email);
+    cy.get('input[data-qa="login-password"]').click().type(user.password);
+    cy.get('button[data-qa="login-button"]').click();
+
+    // 6. Verify 'Logged in as username' at top
+    cy.contains(`Logged in as ${user.name}`).should('be.visible');
+
+    // 7. Add products to cart
+    cy.get('ul.navbar-nav li').contains('Products').click();
+    cy.get('a[data-product-id="1"]')
+      .first()
+      .trigger('mouseover')
+      .contains('Add to cart')
+      .click();
+
+    // 8. Click 'Cart' button
+    cy.wait(2000);
+    cy.get('a[href="/view_cart"]').eq(1).click();
+
+    // 9. Verify that cart page is displayed
+    cy.url().should('eq', 'https://automationexercise.com/view_cart');
+
+    // 10. Click Proceed To Checkout
+    cy.get('a').contains('Proceed To Checkout').click();
+
+    // 11. Verify Address Details and Review Your Order
+    cy.contains('Address Details').should('be.visible');
+    cy.contains('Review Your Order').should('be.visible');
+
+    // 12. Enter description in comment text area and click 'Place Order'
+    cy.get('textarea.form-control').click().type('Test Comment');
+    cy.get('a').contains('Place Order').click();
+
+    // 13. Enter payment details: Name on Card, Card Number, CVC, Expiration date
+    cy.get('input[data-qa="name-on-card"]').click().type('Tomas Test');
+    cy.get('input[data-qa="card-number"]').click().type('1234567890123456');
+    cy.get('input[data-qa="cvc"]').click().type('123');
+    cy.get('input[data-qa="expiry-month"]').click().type('10');
+    cy.get('input[data-qa="expiry-year"]').click().type('2028');
+
+    // 14. Click 'Pay and Confirm Order' button
+    cy.get('button[data-qa="pay-button"]').click();
+
+    // 15. Verify success message 'Your order has been placed successfully!'
+    cy.contains('Congratulations! Your order has been confirmed!').should(
+      'be.visible'
+    );
+
+    // 16. Click 'Delete Account' button
+    cy.contains('Delete Account').click();
+
+    // 17. Verify 'ACCOUNT DELETED!' and click 'Continue' button
+    cy.contains('Account Deleted!').should('be.visible');
+    cy.get('[data-qa="continue-button"]').click();
+  });
+
+  it('Test Case 17: Remove Products From Cart', () => {
+    // 1. Launch browser
+    // 2. Navigate to url 'http://automationexercise.com'
+    cy.visit('https://automationexercise.com/');
+
+    // 3. Verify that home page is visible successfully
+    cy.url().should('eq', 'https://automationexercise.com/');
+    cy.get('body').should('be.visible');
+
+    // 4. Add products to cart
+    cy.get('ul.navbar-nav li').contains('Products').click();
+    cy.get('a[data-product-id="1"]')
+      .first()
+      .trigger('mouseover')
+      .contains('Add to cart')
+      .click();
+
+    // 5. Click 'Cart' button
+    cy.wait(2000);
+    cy.get('a[href="/view_cart"]').eq(1).click();
+
+    // 6. Verify that cart page is displayed
+    cy.url().should('eq', 'https://automationexercise.com/view_cart');
+
+    // 7. Click 'X' button corresponding to particular product
+    cy.get('a[data-product-id="1"]').trigger('mouseover').click();
+
+    // 8. Verify that product is removed from the cart
+    cy.get('a[data-product-id="1"]').should('not.exist');
+  });
+
+  it('Test Case 18: View Category Products', () => {
+    // 1. Launch browser
+    // 2. Navigate to url 'http://automationexercise.com'
+    cy.visit('https://automationexercise.com/');
+
+    // 3. Verify that categories are visible on left side bar
+    cy.get('div.left-sidebar').contains('Category').should('be.visible');
+
+    // 4. Click on 'Women' category
+    cy.get('div.left-sidebar').contains('Women').click();
+
+    // 5. Click on any category link under 'Women' category, for example: Dress
+    cy.get('div.left-sidebar').contains('Dress').click();
+
+    // 6. Verify that category page is displayed and confirm text 'WOMEN - TOPS DRESS PRODUCTS'
+    cy.url().should('eq', 'https://automationexercise.com/category_products/1');
+    cy.contains('Women - Dress Products').should('be.visible');
+
+    // 7. On left side bar, click on any sub-category link of 'Men' category
+    cy.get('div.left-sidebar').contains('Men').click();
+    cy.get('div.left-sidebar').contains('Jeans').click();
+
+    // 8. Verify that user is navigated to that category page
+    cy.url().should('eq', 'https://automationexercise.com/category_products/6');
+    cy.contains('Men - Jeans Products').should('be.visible');
+  });
+
+  it('Test Case 19: View & Cart Brand Products', () => {
+    // 1. Launch browser
+    // 2. Navigate to url 'http://automationexercise.com'
+    cy.visit('https://automationexercise.com/');
+
+    // 3. Click on 'Products' button
+    cy.get('ul.navbar-nav li').contains('Products').click();
+
+    // 4. Verify that Brands are visible on left side bar
+    cy.get('div.left-sidebar').contains('Brands').should('be.visible');
+
+    // 5. Click on any brand name
+    cy.get('div.left-sidebar').contains('Polo').click();
+
+    // 6. Verify that user is navigated to brand page and brand products are displayed
+    cy.url().should('eq', 'https://automationexercise.com/brand_products/Polo');
+    cy.contains('Polo').should('be.visible');
+
+    // 7. On left side bar, click on any other brand link
+    cy.get('div.left-sidebar').contains('H&M').click();
+
+    // 8. Verify that user is navigated to that brand page and can see products
+    cy.url().should('eq', 'https://automationexercise.com/brand_products/H&M');
+    cy.contains('H&M').should('be.visible');
+  });
+
+  it('Test Case 20: Search Products and Verify Cart After Login', () => {
+    const user = createUser();
+    logout();
+    // 1. Launch browser
+    // 2. Navigate to url 'http://automationexercise.com'
+    cy.visit('https://automationexercise.com/');
+
+    // 3. Click on 'Products' button
+    cy.get('ul.navbar-nav li').contains('Products').click();
+
+    // 4. Verify user is navigated to ALL PRODUCTS page successfully
+    cy.url().should('eq', 'https://automationexercise.com/products');
+
+    // 5. Enter product name in search input and click search button
+    cy.get('input#search_product').type('jeans');
+    cy.get('button#submit_search').click();
+
+    // 6. Verify 'SEARCHED PRODUCTS' is visible
+    cy.contains('Searched Products').should('be.visible');
+
+    // 7. Verify all the products related to search are visible
+    cy.get('.productinfo').each(($el) => {
+      cy.wrap($el).should('contain', 'Jeans').and('is.visible');
+    });
+
+    // 8. Add those products to cart
+    cy.get('.productinfo').each(($el) => {
+      cy.wrap($el).find('a.btn.btn-default.add-to-cart').first().click();
+      cy.get('button[data-dismiss="modal"]').click();
+    });
+
+    // 9. Click 'Cart' button and verify that products are visible in cart
+    cy.get('ul.navbar-nav li').contains('Cart').click();
+    cy.get('tbody tr').each(($el) => {
+      cy.wrap($el).should('contain', 'Jeans').and('is.visible');
+    });
+
+    // 10. Click 'Signup / Login' button and submit login details
+    cy.get('ul.navbar-nav li').contains('Signup / Login').click();
+    cy.get('input[data-qa="login-email"]').type(user.email);
+    cy.get('input[data-qa="login-password"]').type(user.password);
+    cy.get('button[data-qa="login-button"]').click();
+
+    // 11. Again, go to Cart page
+    cy.get('ul.navbar-nav li').contains('Cart').click();
+
+    // 12. Verify that those products are visible in cart after login as well
+    cy.get('tbody tr').each(($el) => {
+      cy.wrap($el).should('contain', 'Jeans').and('is.visible');
+    });
+
+    // Delete user
+    cy.get('ul.navbar-nav li').contains('Delete Account').click();
+  });
+*/
+  it('Test Case 21: Add review on product', () => {
+    // 1. Launch browser
+    // 2. Navigate to url 'http://automationexercise.com'
+    cy.visit('https://automationexercise.com/');
+
+    // 3. Click on 'Products' button
+    cy.get('ul.navbar-nav li').contains('Products').click();
+
+    // 4. Verify user is navigated to ALL PRODUCTS page successfully
+    cy.url().should('eq', 'https://automationexercise.com/products');
+
+    // 5. Click on 'View Product' button
+    cy.get('a[href="/product_details/1"]').contains('View Product').click();
+
+    // 6. Verify 'Write Your Review' is visible
+    cy.contains('Write Your Review').should('be.visible');
+
+    // 7. Enter name, email and review
+    cy.get('input#name').type('Tomas');
+    cy.get('input#email').type('tomastest@gmail.com');
+    cy.get('textarea#review').type('Test Review');
+
+    // 8. Click 'Submit' button
+    cy.get('#button-review').click();
+
+    // 9. Verify success message 'Thank you for your review.'
+    cy.contains('Thank you for your review.').should('be.visible');
+  });
+
+  it('Test Case 22: Add to cart from Recommended items', () => {
+    // 1. Launch browser
+    // 2. Navigate to url 'http://automationexercise.com'
+    cy.visit('https://automationexercise.com/');
+
+    // 3. Scroll to bottom of page
+    cy.scrollTo('bottom');
+
+    // 4. Verify 'RECOMMENDED ITEMS' are visible
+    cy.contains('recommended items').should('be.visible');
+
+    // 5. Click on 'Add To Cart' on Recommended product
+    cy.get('#recommended-item-carousel .productinfo a').first().click({
+      force: true,
+    });
+
+    // 6. Click on 'View Cart' button
+    cy.get('a[href="/view_cart"]').contains('View Cart').click();
+
+    // 7. Verify that product is displayed in cart page
+    cy.get('tbody tr').should('have.length', 1).and('be.visible');
+  });
 });
 
 /*
-
+Test Case 23: Verify address details in checkout page
+1. Launch browser
+2. Navigate to url 'http://automationexercise.com'
+3. Verify that home page is visible successfully
+4. Click 'Signup / Login' button
+5. Fill all details in Signup and create account
+6. Verify 'ACCOUNT CREATED!' and click 'Continue' button
+7. Verify ' Logged in as username' at top
+8. Add products to cart
+9. Click 'Cart' button
+10. Verify that cart page is displayed
+11. Click Proceed To Checkout
+12. Verify that the delivery address is same address filled at the time registration of account
+13. Verify that the billing address is same address filled at the time registration of account
+14. Click 'Delete Account' button
+15. Verify 'ACCOUNT DELETED!' and click 'Continue' button
 */
