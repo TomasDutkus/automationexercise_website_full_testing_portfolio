@@ -92,7 +92,7 @@ function logout() {
 }
 
 describe('Automation Exercise', () => {
-  /*it('Test Case 1: Register User', () => {
+  it('Test Case 1: Register User', () => {
     // Create a user and save the details in Cypress.env
     const user = createUser();
 
@@ -326,7 +326,7 @@ describe('Automation Exercise', () => {
     // 8. User is landed to product detail page
     cy.url().should('eq', 'https://automationexercise.com/product_details/1');
 
-    // 9. Verify that detail detail is visible: product name, category, price, availability, condition, brand
+    // 9. Verify that detail is visible: product name, category, price, availability, condition, brand
     cy.get('.product-information').should('be.visible');
     cy.get('h2').contains('Blue Top').should('be.visible');
     cy.get('p').contains('Category').should('be.visible');
@@ -825,7 +825,7 @@ describe('Automation Exercise', () => {
     // Delete user
     cy.get('ul.navbar-nav li').contains('Delete Account').click();
   });
-*/
+
   it('Test Case 21: Add review on product', () => {
     // 1. Launch browser
     // 2. Navigate to url 'http://automationexercise.com'
@@ -877,23 +877,241 @@ describe('Automation Exercise', () => {
     // 7. Verify that product is displayed in cart page
     cy.get('tbody tr').should('have.length', 1).and('be.visible');
   });
-});
 
-/*
-Test Case 23: Verify address details in checkout page
-1. Launch browser
-2. Navigate to url 'http://automationexercise.com'
-3. Verify that home page is visible successfully
-4. Click 'Signup / Login' button
-5. Fill all details in Signup and create account
-6. Verify 'ACCOUNT CREATED!' and click 'Continue' button
-7. Verify ' Logged in as username' at top
-8. Add products to cart
-9. Click 'Cart' button
-10. Verify that cart page is displayed
-11. Click Proceed To Checkout
-12. Verify that the delivery address is same address filled at the time registration of account
-13. Verify that the billing address is same address filled at the time registration of account
-14. Click 'Delete Account' button
-15. Verify 'ACCOUNT DELETED!' and click 'Continue' button
-*/
+  it('Test Case 23: Verify address details in checkout page', () => {
+    const user = createUser();
+
+    // 8. Add products to cart
+    cy.get('ul.navbar-nav li').contains('Products').click();
+    cy.get('a[data-product-id="1"]')
+      .first()
+      .trigger('mouseover')
+      .contains('Add to cart')
+      .click();
+
+    // 9. Click 'Cart' button
+    cy.wait(2000);
+    cy.get('a[href="/view_cart"]').eq(1).click();
+
+    // 10. Verify that cart page is displayed
+    cy.url().should('eq', 'https://automationexercise.com/view_cart');
+
+    // 11. Click Proceed To Checkout
+    cy.get('a').contains('Proceed To Checkout').click();
+
+    // 12. Verify that the delivery address is same address filled at the time registration of account
+    cy.get('li.address_firstname.address_lastname')
+      .eq(0)
+      .should('contain', 'Mr. ' + user.name + ' ' + user.lastName);
+    cy.get('li.address_address1.address_address2')
+      .eq(0)
+      .should('contain', user.company);
+    cy.get('li.address_address1.address_address2')
+      .eq(1)
+      .should('contain', user.address);
+    cy.get('li.address_address1.address_address2')
+      .eq(2)
+      .should('contain', user.address2);
+    cy.get('li.address_city.address_state_name.address_postcode')
+      .eq(0)
+      .should(
+        'contain',
+        user.city + ' ' + user.state + '\n\t\t\t\t\t\t\t\t' + user.zipcode
+      );
+    cy.get('li.address_country_name').eq(0).should('contain', user.country);
+    cy.get('li.address_phone').eq(0).should('contain', user.mobileNumber);
+
+    // 13. Verify that the billing address is same address filled at the time registration of account
+    cy.get('li.address_firstname.address_lastname')
+      .eq(1)
+      .should('contain', 'Mr. ' + user.name + ' ' + user.lastName);
+    cy.get('li.address_address1.address_address2')
+      .eq(3)
+      .should('contain', user.company);
+    cy.get('li.address_address1.address_address2')
+      .eq(4)
+      .should('contain', user.address);
+    cy.get('li.address_address1.address_address2')
+      .eq(5)
+      .should('contain', user.address2);
+    cy.get('li.address_city.address_state_name.address_postcode')
+      .eq(1)
+      .should(
+        'contain',
+        user.city + ' ' + user.state + '\n\t\t\t\t\t\t\t\t' + user.zipcode
+      );
+    cy.get('li.address_country_name').eq(1).should('contain', user.country);
+    cy.get('li.address_phone').eq(1).should('contain', user.mobileNumber);
+
+    // 14. Click 'Delete Account' button
+    cy.get('a').contains('Delete Account').click();
+
+    // 15. Verify 'ACCOUNT DELETED!' and click 'Continue' button
+    cy.contains('Account Deleted!').should('be.visible');
+  });
+
+  it('Test Case 24: Download Invoice after purchase order', () => {
+    // 1. Launch browser
+    // 2. Navigate to url 'http://automationexercise.com'
+    cy.visit('https://automationexercise.com/');
+
+    // 3. Verify that home page is visible successfully
+    cy.url().should('eq', 'https://automationexercise.com/');
+    cy.get('body').should('be.visible');
+
+    // 4. Add products to cart
+    cy.get('ul.navbar-nav li').contains('Products').click();
+    cy.get('a[data-product-id="1"]')
+      .first()
+      .trigger('mouseover')
+      .contains('Add to cart')
+      .click();
+
+    // 5. Click 'Cart' button
+    cy.wait(2000);
+    cy.get('a[href="/view_cart"]').eq(1).click();
+
+    // 6. Verify that cart page is displayed
+    cy.url().should('eq', 'https://automationexercise.com/view_cart');
+
+    // 7. Click Proceed To Checkout
+    cy.get('a').contains('Proceed To Checkout').click();
+
+    // 8. Click 'Register / Login' button
+    // 9. Fill all details in Signup and create account
+    // 10. Verify 'ACCOUNT CREATED!' and click 'Continue' button
+    // 11. Verify ' Logged in as username' at top
+    const user = createUser();
+
+    // 12.Click 'Cart' button
+    cy.get('a[href="/view_cart"]').eq(0).click();
+
+    // 13. Click 'Proceed To Checkout' button
+    cy.get('a').contains('Proceed To Checkout').click();
+
+    // 14. Verify Address Details and Review Your Order
+    cy.get('li.address_firstname.address_lastname')
+      .eq(0)
+      .should('contain', 'Mr. ' + user.name + ' ' + user.lastName);
+    cy.get('li.address_address1.address_address2')
+      .eq(0)
+      .should('contain', user.company);
+    cy.get('li.address_address1.address_address2')
+      .eq(1)
+      .should('contain', user.address);
+    cy.get('li.address_address1.address_address2')
+      .eq(2)
+      .should('contain', user.address2);
+    cy.get('li.address_city.address_state_name.address_postcode')
+      .eq(0)
+      .should(
+        'contain',
+        user.city + ' ' + user.state + '\n\t\t\t\t\t\t\t\t' + user.zipcode
+      );
+    cy.get('li.address_country_name').eq(0).should('contain', user.country);
+    cy.get('li.address_phone').eq(0).should('contain', user.mobileNumber);
+    cy.get('li.address_firstname.address_lastname')
+      .eq(1)
+      .should('contain', 'Mr. ' + user.name + ' ' + user.lastName);
+    cy.get('li.address_address1.address_address2')
+      .eq(3)
+      .should('contain', user.company);
+    cy.get('li.address_address1.address_address2')
+      .eq(4)
+      .should('contain', user.address);
+    cy.get('li.address_address1.address_address2')
+      .eq(5)
+      .should('contain', user.address2);
+    cy.get('li.address_city.address_state_name.address_postcode')
+      .eq(1)
+      .should(
+        'contain',
+        user.city + ' ' + user.state + '\n\t\t\t\t\t\t\t\t' + user.zipcode
+      );
+    cy.get('li.address_country_name').eq(1).should('contain', user.country);
+    cy.get('li.address_phone').eq(1).should('contain', user.mobileNumber);
+
+    cy.get('a[href="/product_details/1"]').contains('Blue Top');
+
+    // 15. Enter description in comment text area and click 'Place Order'
+    cy.get('textarea.form-control').click().type('Test Comment');
+    cy.get('a').contains('Place Order').click();
+
+    // 16. Enter payment details: Name on Card, Card Number, CVC, Expiration date
+    cy.get('input[data-qa="name-on-card"]').click().type('Tomas Test');
+    cy.get('input[data-qa="card-number"]').click().type('1234567890123456');
+    cy.get('input[data-qa="cvc"]').click().type('123');
+    cy.get('input[data-qa="expiry-month"]').click().type('10');
+    cy.get('input[data-qa="expiry-year"]').click().type('2028');
+
+    // 17. Click 'Pay and Confirm Order' button
+    cy.get('button[data-qa="pay-button"]').click();
+
+    // 18. Verify success message 'Your order has been placed successfully!'
+    cy.contains('Congratulations! Your order has been confirmed!').should(
+      'be.visible'
+    );
+
+    // 19. Click 'Download Invoice' button and verify invoice is downloaded successfully.
+    cy.get('a').contains('Download Invoice').click();
+    const downloadsFolder = Cypress.config('downloadsFolder');
+    cy.readFile(`${downloadsFolder}/invoice.txt`).should('exist');
+
+    // 20. Click 'Continue' button
+    cy.get('a').contains('Continue').click();
+
+    // 21. Click 'Delete Account' button
+    cy.get('a').contains('Delete Account').click();
+
+    // 22. Verify 'ACCOUNT DELETED!' and click 'Continue' button
+    cy.contains('Account Deleted!').should('be.visible');
+  });
+
+  it('Test Case 25: Verify Scroll Up using Arrow button and Scroll Down functionality', () => {
+    // 1. Launch browser
+    // 2. Navigate to url 'http://automationexercise.com'
+    cy.visit('https://automationexercise.com/');
+
+    // 3. Verify that home page is visible successfully
+    cy.url().should('eq', 'https://automationexercise.com/');
+    cy.get('body').should('be.visible');
+
+    // 4. Scroll down page to bottom
+    cy.scrollTo('bottom');
+
+    // 5. Verify 'SUBSCRIPTION' is visible
+    cy.contains('Subscription').should('be.visible');
+
+    // 6. Click on arrow at bottom right side to move upward
+    cy.get('i[class="fa fa-angle-up"]').click();
+
+    // 7. Verify that page is scrolled up and 'Full-Fledged practice website for Automation Engineers' text is visible on screen
+    cy.contains(
+      'Full-Fledged practice website for Automation Engineers'
+    ).should('be.visible');
+  });
+
+  it('Test Case 26: Verify Scroll Up without Arrow button and Scroll Down functionality', () => {
+    // 1. Launch browser
+    // 2. Navigate to url 'http://automationexercise.com'
+    cy.visit('https://automationexercise.com/');
+
+    // 3. Verify that home page is visible successfully
+    cy.url().should('eq', 'https://automationexercise.com/');
+    cy.get('body').should('be.visible');
+
+    // 4. Scroll down page to bottom
+    cy.scrollTo('bottom');
+
+    // 5. Verify 'SUBSCRIPTION' is visible
+    cy.contains('Subscription').should('be.visible');
+
+    // 6. Scroll up page to top
+    cy.scrollTo('top');
+
+    // 7. Verify that page is scrolled up and 'Full-Fledged practice website for Automation Engineers' text is visible on screen
+    cy.contains(
+      'Full-Fledged practice website for Automation Engineers'
+    ).should('be.visible');
+  });
+});
